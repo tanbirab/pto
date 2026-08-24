@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutoria Forms — Requirements, Feedback &amp; Tutor Registration</title>
+<meta name="description" content="Simple forms for Tutoria's parents, students and tutors: share tuition requirements, give feedback, or register as a tutor.">
+
+<meta property="og:title" content="Tutoria Forms">
+<meta property="og:description" content="Simple forms for Tutoria's parents, students and tutors.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://YOUR-DOMAIN-HERE.com/forms.html">
+
+<link rel="canonical" href="https://YOUR-DOMAIN-HERE.com/forms.html">
+<link rel="icon" href="images/favicon.ico">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================================
+   TUTORIA — STYLE.CSS
+   A single stylesheet shared by every page.
+   Organised as: tokens -> reset -> layout -> components -> page sections
+   -> utilities -> responsive.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   1. DESIGN TOKENS
+   Change colours, fonts and spacing here and the whole site updates.
+   ------------------------------------------------------------------------- */
+:root {
+  /* Colour palette */
+  --ink: #16213A;            /* primary text / deep navy */
+  --ink-soft: #3B4863;       /* secondary text */
+  --paper: #FAF7F1;          /* page background, warm ivory */
+  --paper-raised: #FFFFFF;   /* cards */
+  --line: #E4DECF;           /* hairline borders */
+  --line-strong: #CFC6AE;
+  --accent: #93672E;         /* brass / warm gold — primary accent */
+  --accent-soft: #F1E6D2;    /* accent tint for backgrounds */
+  --accent-dark: #6E4E22;
+  --whatsapp: #2E7D5B;       /* muted green, used only for WhatsApp actions */
+  --whatsapp-dark: #235F45;
+  --success: #2E7D5B;
+  --error: #B3432B;
+
+  /* Typography */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+
+  /* Type scale */
+  --fs-eyebrow: 0.72rem;
+  --fs-body: 1rem;
+  --fs-body-lg: 1.125rem;
+  --fs-h4: 1.35rem;
+  --fs-h3: 1.75rem;
+  --fs-h2: 2.5rem;
+  --fs-h1: clamp(2.5rem, 6vw, 4.2rem);
+
+  /* Spacing */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.75rem;
+  --space-lg: 3rem;
+  --space-xl: 5rem;
+  --space-2xl: 8rem;
+
+  /* Misc */
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 8px 30px rgba(22, 33, 58, 0.07);
+  --shadow-hover: 0 14px 40px rgba(22, 33, 58, 0.12);
+  --max-width: 1180px;
+  --header-height: 76px;
+  --transition: 200ms ease;
+}
+
+/* -------------------------------------------------------------------------
+   2. RESET & BASE
+   ------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 16px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; text-decoration: none; }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 var(--space-sm);
+  color: var(--ink);
+}
+
+h1 { font-size: var(--fs-h1); letter-spacing: -0.01em; }
+h2 { font-size: var(--fs-h2); letter-spacing: -0.01em; }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); }
+
+p { margin: 0 0 var(--space-sm); color: var(--ink-soft); }
+
+ul { margin: 0; padding: 0; list-style: none; }
+
+button { font-family: inherit; cursor: pointer; }
+
+input, select, textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+/* Visible keyboard focus everywhere */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Skip link for keyboard users */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.75rem 1.25rem;
+  z-index: 200;
+  border-radius: var(--radius-sm);
+}
+.skip-link:focus {
+  left: var(--space-sm);
+  top: var(--space-sm);
+}
+
+/* -------------------------------------------------------------------------
+   3. LAYOUT HELPERS
+   ------------------------------------------------------------------------- */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.section {
+  padding: var(--space-2xl) 0;
+}
+
+.section--tight { padding: var(--space-xl) 0; }
+
+.section--tinted {
+  background: var(--paper-raised);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.section-head {
+  max-width: 640px;
+  margin: 0 0 var(--space-lg);
+}
+.section-head--center { margin-left: auto; margin-right: auto; text-align: center; }
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: var(--space-sm);
+}
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--accent);
+  display: inline-block;
+}
+
+/* -------------------------------------------------------------------------
+   4. BUTTONS
+   ------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.7rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1px solid transparent;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-2px); }
+
+.btn--primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn--primary:hover { background: var(--accent-dark); box-shadow: var(--shadow-hover); }
+
+.btn--accent {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+.btn--accent:hover { background: var(--accent-dark); box-shadow: var(--shadow-hover); }
+
+.btn--outline {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+.btn--outline:hover { border-color: var(--ink); background: var(--paper-raised); }
+
+.btn--whatsapp {
+  background: var(--whatsapp);
+  color: #fff;
+}
+.btn--whatsapp:hover { background: var(--whatsapp-dark); box-shadow: var(--shadow-hover); }
+
+.btn--block { width: 100%; }
+.btn--sm { padding: 0.6rem 1.1rem; font-size: 0.85rem; }
+
+.btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+/* -------------------------------------------------------------------------
+   5. HEADER / NAVIGATION
+   ------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  background: rgba(250, 247, 241, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+.logo span { color: var(--accent); }
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.nav-links a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+  padding: 0.4rem 0.1rem;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+.nav-links a:hover,
+.nav-links a[aria-current="page"] {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.nav-actions { display: flex; align-items: center; gap: var(--space-sm); }
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  color: var(--ink);
+}
+.hamburger svg { width: 26px; height: 26px; }
+
+.mobile-nav {
+  display: none;
+  position: fixed;
+  inset: var(--header-height) 0 0 0;
+  background: var(--paper);
+  z-index: 99;
+  padding: var(--space-lg) var(--space-md);
+  overflow-y: auto;
+}
+.mobile-nav.is-open { display: block; }
+.mobile-nav a {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--line);
+}
+.mobile-nav .btn { margin-top: var(--space-lg); }
+
+/* -------------------------------------------------------------------------
+   6. HERO
+   ------------------------------------------------------------------------- */
+.hero {
+  padding: var(--space-2xl) 0 var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.hero-copy h1 { margin-bottom: var(--space-md); }
+.hero-copy .lead {
+  font-size: var(--fs-body-lg);
+  max-width: 46ch;
+  margin-bottom: var(--space-lg);
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* Signature visual: connecting line motif between "student" and "tutor" */
+.hero-visual {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.hero-visual svg { width: 100%; height: 100%; }
+
+.connector-path {
+  stroke: var(--accent);
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 6 8;
+  stroke-linecap: round;
+  animation: dash-flow 20s linear infinite;
+}
+@keyframes dash-flow {
+  to { stroke-dashoffset: -400; }
+}
+
+.node-card {
+  fill: var(--paper-raised);
+  stroke: var(--line-strong);
+  stroke-width: 1;
+}
+
+.node-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  fill: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+.node-dot {
+  fill: var(--accent);
+}
+
+/* -------------------------------------------------------------------------
+   7. CARD GRIDS (Why Tutoria / How it works)
+   ------------------------------------------------------------------------- */
+.grid {
+  display: grid;
+  gap: var(--space-md);
+}
+.grid--4 { grid-template-columns: repeat(4, 1fr); }
+.grid--3 { grid-template-columns: repeat(3, 1fr); }
+.grid--2 { grid-template-columns: repeat(2, 1fr); }
+
+.card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-lg) var(--space-md);
+  transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
+}
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+}
+
+.card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-sm);
+  color: var(--accent-dark);
+}
+.card-icon svg { width: 22px; height: 22px; }
+
+.card h4 { margin-bottom: 0.4rem; }
+.card p { margin-bottom: 0; font-size: 0.96rem; }
+
+/* Process / How it works */
+.process-step {
+  position: relative;
+  padding-left: var(--space-lg);
+  border-left: 1px solid var(--line);
+}
+.process-step:last-child { border-left-color: transparent; }
+
+.process-number {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -18px;
+  top: 0;
+  border: 4px solid var(--paper);
+}
+
+.process-step h4 { margin-bottom: 0.3rem; }
+.process-step { padding-bottom: var(--space-lg); }
+.process-step:last-child { padding-bottom: 0; }
+
+/* -------------------------------------------------------------------------
+   8. TESTIMONIALS
+   ------------------------------------------------------------------------- */
+.testimonial-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(260px, 1fr));
+  gap: var(--space-md);
+}
+
+.testimonial-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.testimonial-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
+  padding: 0.2rem 0.55rem;
+  border-radius: 100px;
+  align-self: flex-start;
+}
+
+.stars {
+  color: var(--accent);
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+}
+
+.testimonial-quote {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--ink);
+  font-style: italic;
+  margin: 0;
+}
+
+.testimonial-meta {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   9. ABOUT PREVIEW / CTA BAND
+   ------------------------------------------------------------------------- */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.cta-band {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: var(--radius);
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+}
+.cta-band h2 { color: var(--paper); }
+.cta-band p { color: #C9CEDA; }
+.cta-band .hero-actions { justify-content: center; }
+
+/* -------------------------------------------------------------------------
+   10. FOOTER
+   ------------------------------------------------------------------------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  padding: var(--space-xl) 0 var(--space-md);
+  background: var(--paper-raised);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: var(--space-lg);
+  padding-bottom: var(--space-lg);
+}
+
+.footer-brand .logo { display: inline-block; margin-bottom: var(--space-xs); }
+.footer-brand p { max-width: 32ch; font-size: 0.92rem; }
+
+.footer-col h4 {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: var(--space-sm);
+}
+
+.footer-col a {
+  display: block;
+  padding: 0.35rem 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  transition: color var(--transition);
+}
+.footer-col a:hover { color: var(--accent-dark); }
+
+.footer-bottom {
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-md);
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+/* -------------------------------------------------------------------------
+   11. FIXED MOBILE WHATSAPP CTA
+   ------------------------------------------------------------------------- */
+.mobile-whatsapp-bar {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  padding: 0.75rem;
+  background: var(--paper-raised);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 20px rgba(22,33,58,0.08);
+}
+
+/* -------------------------------------------------------------------------
+   12. PAGE HEADER (About / Forms / Agreement banner)
+   ------------------------------------------------------------------------- */
+.page-hero {
+  padding: var(--space-xl) 0 var(--space-lg);
+  border-bottom: 1px solid var(--line);
+}
+.page-hero .eyebrow { margin-bottom: var(--space-sm); }
+.page-hero .lead { max-width: 60ch; font-size: var(--fs-body-lg); }
+
+/* -------------------------------------------------------------------------
+   13. FORMS
+   ------------------------------------------------------------------------- */
+.form-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+}
+
+.form-intro { margin-bottom: var(--space-lg); }
+.form-intro .eyebrow { margin-bottom: var(--space-xs); }
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md) var(--space-md);
+}
+
+.field { position: relative; margin-bottom: var(--space-md); }
+.field--full { grid-column: 1 / -1; }
+
+.field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+}
+
+.field .hint {
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 0.3rem;
+  display: block;
+}
+
+.field input[type="text"],
+.field input[type="tel"],
+.field input[type="email"],
+.field input[type="number"],
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.field textarea { resize: vertical; min-height: 100px; }
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.field.has-error input,
+.field.has-error select,
+.field.has-error textarea {
+  border-color: var(--error);
+}
+.field-error {
+  display: none;
+  color: var(--error);
+  font-size: 0.8rem;
+  margin-top: 0.35rem;
+}
+.field.has-error .field-error { display: block; }
+
+.radio-row, .checkbox-row {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+.radio-option, .checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+}
+.radio-option input, .checkbox-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+.consent-row input { margin-top: 0.25rem; width: 18px; height: 18px; accent-color: var(--accent-dark); flex-shrink: 0; }
+.consent-row label { font-size: 0.9rem; color: var(--ink); font-weight: 500; }
+
+.star-select {
+  display: flex;
+  gap: 0.4rem;
+}
+.star-select button {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: var(--line-strong);
+  padding: 0;
+  line-height: 1;
+  transition: color var(--transition), transform var(--transition);
+}
+.star-select button.is-active,
+.star-select button:hover { color: var(--accent); transform: scale(1.08); }
+
+.form-status {
+  display: none;
+  border-radius: var(--radius-sm);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  font-size: 0.92rem;
+}
+.form-status.is-visible { display: block; }
+.form-status--success {
+  background: rgba(46,125,91,0.1);
+  color: var(--whatsapp-dark);
+  border: 1px solid rgba(46,125,91,0.3);
+}
+.form-status--error {
+  background: rgba(179,67,43,0.08);
+  color: var(--error);
+  border: 1px solid rgba(179,67,43,0.3);
+}
+
+.forms-nav {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin: var(--space-lg) 0;
+}
+.forms-nav a {
+  border: 1px solid var(--line-strong);
+  border-radius: 100px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  transition: all var(--transition);
+}
+.forms-nav a:hover { border-color: var(--ink); color: var(--ink); background: var(--paper-raised); }
+
+.form-block { padding-top: var(--space-lg); scroll-margin-top: calc(var(--header-height) + 24px); }
+.form-block + .form-block {
+  margin-top: var(--space-lg);
+  border-top: 1px solid var(--line);
+}
+
+.form-group-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-dark);
+  margin-bottom: var(--space-sm);
+}
+
+/* -------------------------------------------------------------------------
+   14. AGREEMENT PAGE
+   ------------------------------------------------------------------------- */
+.agreement-card {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-lg);
+  text-align: center;
+}
+.agreement-card .field { text-align: left; }
+.agreement-result {
+  display: none;
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--ink);
+  font-size: 0.95rem;
+  text-align: left;
+}
+.agreement-result.is-visible { display: block; }
+
+/* -------------------------------------------------------------------------
+   15. ABOUT PAGE
+   ------------------------------------------------------------------------- */
+.about-block { max-width: 720px; }
+.about-block + .about-block { margin-top: var(--space-xl); }
+
+/* -------------------------------------------------------------------------
+   16. UTILITIES
+   ------------------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+.text-center { text-align: center; }
+.mt-lg { margin-top: var(--space-lg); }
+
+/* -------------------------------------------------------------------------
+   17. RESPONSIVE
+   ------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .grid--4 { grid-template-columns: repeat(2, 1fr); }
+  .testimonial-track { grid-template-columns: repeat(2, minmax(240px,1fr)); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 860px) {
+  .nav-links { display: none; }
+  .nav-actions .btn--whatsapp span { display: none; }
+  .hamburger { display: inline-flex; }
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-visual { order: -1; max-width: 320px; }
+  .split { grid-template-columns: 1fr; }
+  .grid--3 { grid-template-columns: 1fr; }
+  .process-step { padding-left: var(--space-md); }
+  .mobile-whatsapp-bar { display: block; }
+  body { padding-bottom: 68px; } /* room for fixed whatsapp bar */
+}
+
+@media (max-width: 640px) {
+  .grid--4 { grid-template-columns: 1fr; }
+  .grid--2 { grid-template-columns: 1fr; }
+  .testimonial-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: var(--space-sm);
+    margin: 0 calc(var(--space-md) * -1);
+    padding: 0 var(--space-md) var(--space-sm);
+  }
+  .testimonial-card { min-width: 82%; scroll-snap-align: start; }
+  .field-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .section { padding: var(--space-xl) 0; }
+  .section--tight { padding: var(--space-lg) 0; }
+  h1 { font-size: var(--fs-h1); }
+  h2 { font-size: 1.9rem; }
+}
+
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container">
+    <a href="index.html" class="logo" aria-label="Tutoria home">TUTOR<span>IA</span></a>
+    <nav class="main-nav" aria-label="Primary">
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="forms.html" aria-current="page">Forms</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="#" class="btn btn--whatsapp btn--sm" data-whatsapp-message="Hi Tutoria, I'd like to find a tutor.">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 20 12a8 8 0 0 1-8 8z"/></svg>
+          <span>WhatsApp Us</span>
+        </a>
+      </div>
+    </nav>
+    <button class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
+
+<nav id="mobile-nav" class="mobile-nav" aria-label="Mobile">
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="forms.html">Forms</a>
+  <a href="#" class="btn btn--whatsapp btn--block" data-whatsapp-message="Hi Tutoria, I'd like to find a tutor.">WhatsApp Us</a>
+</nav>
+
+<main id="main">
+
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Forms</p>
+      <h1 style="font-size: var(--fs-h2);">Tutoria Forms</h1>
+      <p class="lead">Simple forms for our parents, students and tutors.</p>
+
+      <div class="forms-nav" aria-label="Jump to a form">
+        <a href="#tuition-requirement">Tuition Requirement</a>
+        <a href="#feedback">Share Your Experience</a>
+        <a href="#tutor-registration">Tutor Registration</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="container">
+      <p class="eyebrow">For Parents &amp; Students</p>
+
+      <!-- ============ TUITION REQUIREMENT FORM ============ -->
+      <div id="tuition-requirement" class="form-block">
+        <div class="form-intro">
+          <h2>Tuition Requirement</h2>
+          <p>Already spoken with our team? Share your requirements so we can keep everything organised.</p>
+        </div>
+
+        <div class="form-card">
+          <form data-tutoria-form aria-label="Tuition requirement form">
+            <div class="form-status" role="status"></div>
+
+            <div class="field-grid">
+              <div class="field" data-field>
+                <label for="tr-guardian">Guardian name</label>
+                <input type="text" id="tr-guardian" name="guardianName" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-student">Student name</label>
+                <input type="text" id="tr-student" name="studentName" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-phone">Phone number</label>
+                <input type="tel" id="tr-phone" name="phone" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-class">Class</label>
+                <input type="text" id="tr-class" name="studentClass" placeholder="e.g. Class 9" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-board">Board</label>
+                <select id="tr-board" name="board" required>
+                  <option value="">Select board</option>
+                  <option>ICSE</option>
+                  <option>CBSE</option>
+                  <option>WBBSE</option>
+                  <option>IB</option>
+                  <option>IGCSE</option>
+                  <option>Other</option>
+                </select>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-subject">Subject</label>
+                <input type="text" id="tr-subject" name="subject" placeholder="e.g. Mathematics" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-location">Location</label>
+                <input type="text" id="tr-location" name="location" placeholder="Area in Kolkata" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-days">Preferred days</label>
+                <input type="text" id="tr-days" name="preferredDays" placeholder="e.g. Mon, Wed, Fri">
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-time">Preferred time</label>
+                <input type="text" id="tr-time" name="preferredTime" placeholder="e.g. Evenings after 6pm">
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tr-budget">Budget</label>
+                <input type="text" id="tr-budget" name="budget" placeholder="e.g. ₹4,000/month">
+                <span class="field-error"></span>
+              </div>
+              <div class="field field--full" data-field>
+                <label>Online or offline</label>
+                <div class="radio-row">
+                  <label class="radio-option"><input type="radio" name="mode" value="Online" required> Online</label>
+                  <label class="radio-option"><input type="radio" name="mode" value="Offline" required> Offline</label>
+                  <label class="radio-option"><input type="radio" name="mode" value="Either" required> Either</label>
+                </div>
+                <span class="field-error"></span>
+              </div>
+              <div class="field field--full" data-field>
+                <label for="tr-notes">Additional requirements</label>
+                <textarea id="tr-notes" name="additionalNotes" placeholder="Anything else we should know"></textarea>
+                <span class="field-error"></span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--accent btn--block" data-original-label="Submit Tuition Requirements">Submit Tuition Requirements</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ============ FEEDBACK FORM ============ -->
+      <div id="feedback" class="form-block">
+        <div class="form-intro">
+          <h2>Share Your Experience</h2>
+          <p>Had an experience with Tutoria? We'd love to hear from you.</p>
+        </div>
+
+        <div class="form-card">
+          <form data-tutoria-form aria-label="Feedback form">
+            <div class="form-status" role="status"></div>
+
+            <div class="field-grid">
+              <div class="field" data-field>
+                <label for="fb-name">Name</label>
+                <input type="text" id="fb-name" name="name" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="fb-type">I am a</label>
+                <select id="fb-type" name="personType" required>
+                  <option value="">Select one</option>
+                  <option>Parent</option>
+                  <option>Student</option>
+                  <option>Tutor</option>
+                </select>
+                <span class="field-error"></span>
+              </div>
+              <div class="field field--full" data-field>
+                <label id="fb-rating-label">Rating</label>
+                <div class="star-select" data-star-rating role="group" aria-labelledby="fb-rating-label">
+                  <input type="hidden" name="rating" required>
+                  <button type="button" data-value="1" aria-label="1 star" aria-pressed="false">★</button>
+                  <button type="button" data-value="2" aria-label="2 stars" aria-pressed="false">★</button>
+                  <button type="button" data-value="3" aria-label="3 stars" aria-pressed="false">★</button>
+                  <button type="button" data-value="4" aria-label="4 stars" aria-pressed="false">★</button>
+                  <button type="button" data-value="5" aria-label="5 stars" aria-pressed="false">★</button>
+                </div>
+              </div>
+              <div class="field field--full" data-field>
+                <label for="fb-feedback">Feedback</label>
+                <textarea id="fb-feedback" name="feedback" required placeholder="Tell us about your experience"></textarea>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="fb-location">Location (optional)</label>
+                <input type="text" id="fb-location" name="location">
+                <span class="field-error"></span>
+              </div>
+            </div>
+
+            <div class="consent-row">
+              <input type="checkbox" id="fb-consent" name="consent" required>
+              <label for="fb-consent">I give Tutoria permission to feature my feedback on its website.</label>
+            </div>
+
+            <button type="submit" class="btn btn--accent btn--block" data-original-label="Share Your Experience">Share Your Experience</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section--tinted section--tight">
+    <div class="container">
+      <p class="eyebrow">For Tutors</p>
+
+      <!-- ============ TUTOR REGISTRATION FORM ============ -->
+      <div id="tutor-registration" class="form-block" style="border-top:none; margin-top:0;">
+        <div class="form-intro">
+          <h2>Tutor Registration</h2>
+          <p>Interested in tutoring through Tutoria? Register your details and our team can get in touch with you.</p>
+        </div>
+
+        <div class="form-card">
+          <form data-tutoria-form aria-label="Tutor registration form">
+            <div class="form-status" role="status"></div>
+
+            <div class="field-grid">
+              <div class="field" data-field>
+                <label for="tu-name">Full name</label>
+                <input type="text" id="tu-name" name="fullName" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-phone">Phone</label>
+                <input type="tel" id="tu-phone" name="phone" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-whatsapp">WhatsApp number</label>
+                <input type="tel" id="tu-whatsapp" name="whatsappNumber" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-email">Email</label>
+                <input type="email" id="tu-email" name="email">
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-location">Location</label>
+                <input type="text" id="tu-location" name="location" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-subjects">Subjects</label>
+                <input type="text" id="tu-subjects" name="subjects" placeholder="e.g. Physics, Chemistry" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-classes">Classes</label>
+                <input type="text" id="tu-classes" name="classes" placeholder="e.g. Class 8–12" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-qualifications">Qualifications</label>
+                <input type="text" id="tu-qualifications" name="qualifications" required>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-experience">Teaching experience</label>
+                <input type="text" id="tu-experience" name="experience" placeholder="e.g. 3 years">
+                <span class="field-error"></span>
+              </div>
+              <div class="field field--full" data-field>
+                <label>Teaching mode</label>
+                <div class="radio-row">
+                  <label class="radio-option"><input type="radio" name="teachingMode" value="Online" required> Online</label>
+                  <label class="radio-option"><input type="radio" name="teachingMode" value="Offline" required> Offline</label>
+                  <label class="radio-option"><input type="radio" name="teachingMode" value="Both" required> Both</label>
+                </div>
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-areas">Preferred areas</label>
+                <input type="text" id="tu-areas" name="preferredAreas" placeholder="Areas you can travel to">
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-availability">Availability</label>
+                <input type="text" id="tu-availability" name="availability" placeholder="e.g. Weekday evenings">
+                <span class="field-error"></span>
+              </div>
+              <div class="field" data-field>
+                <label for="tu-fees">Expected fees</label>
+                <input type="text" id="tu-fees" name="expectedFees" placeholder="e.g. ₹800/hour">
+                <span class="field-error"></span>
+              </div>
+              <div class="field field--full" data-field>
+                <label for="tu-notes">Additional information</label>
+                <textarea id="tu-notes" name="additionalInfo"></textarea>
+                <span class="field-error"></span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--accent btn--block" data-original-label="Register as a Tutor">Register as a Tutor</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">TUTOR<span>IA</span></a>
+        <p>A Kolkata-based tutoring consultancy connecting students and families with suitable tutors through personalised, human-assisted matching.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Site</h4>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="forms.html">Forms</a>
+        <a href="#" data-whatsapp="plain">WhatsApp</a>
+      </div>
+      <div class="footer-col">
+        <h4>Follow</h4>
+        <a href="https://instagram.com/YOUR_HANDLE" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://facebook.com/YOUR_HANDLE" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://youtube.com/@YOUR_HANDLE" target="_blank" rel="noopener">YouTube</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span id="footer-year"></span> Tutoria. All rights reserved.</span>
+      <span>Kolkata, India</span>
+    </div>
+  </div>
+</footer>
+
+<div class="mobile-whatsapp-bar">
+  <a href="#" class="btn btn--whatsapp btn--block" data-whatsapp-message="Hi Tutoria, I'm looking for a tutor.">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 20 12a8 8 0 0 1-8 8z"/></svg>
+    WhatsApp Us
+  </a>
+</div>
+
+<script>
+/* =========================================================================
+   TUTORIA — MAIN.JS
+   Vanilla JavaScript, no dependencies.
+
+   HOW TO EDIT YOUR WHATSAPP NUMBER
+   --------------------------------
+   Change the WHATSAPP_NUMBER constant below to your real WhatsApp business
+   number, in international format WITHOUT "+", spaces or dashes.
+   Example: for +91 98765 43210 write "919876543210".
+   Every WhatsApp button on the whole site reads from this one constant.
+   ========================================================================= */
+
+const WHATSAPP_NUMBER = "YOUR_WHATSAPP_NUMBER"; // <-- put your real number here, e.g. "919876543210"
+
+// Optional: a normal phone number (for "Call Us" links), international format.
+const CALL_NUMBER = "YOUR_PHONE_NUMBER"; // <-- e.g. "+919876543210"
+
+/* -------------------------------------------------------------------------
+   WHATSAPP HELPERS
+   All WhatsApp buttons across the site call one of these two helpers so
+   there is exactly one place to fix if the number or message wording
+   changes.
+   ------------------------------------------------------------------------- */
+
+/**
+ * Builds a wa.me link with an optional pre-filled message.
+ * @param {string} message - text to pre-fill in the WhatsApp chat
+ * @returns {string} a full https://wa.me/ URL
+ */
+function buildWhatsAppLink(message) {
+  const base = `https://wa.me/${WHATSAPP_NUMBER}`;
+  if (!message) return base;
+  return `${base}?text=${encodeURIComponent(message)}`;
+}
+
+/**
+ * Opens WhatsApp in a new tab with an optional pre-filled message.
+ * @param {string} [message] - optional text to pre-fill
+ */
+function openWhatsApp(message) {
+  window.open(buildWhatsAppLink(message), "_blank", "noopener");
+}
+
+/**
+ * Wires up every element with a [data-whatsapp-message] attribute so that
+ * clicking it opens WhatsApp with that message. Elements can be <a> or
+ * <button>. If an <a> already has an href, it is replaced with the wa.me
+ * link so the button still works even if JavaScript is briefly unavailable.
+ */
+function initWhatsAppButtons() {
+  const nodes = document.querySelectorAll("[data-whatsapp-message]");
+  nodes.forEach((node) => {
+    const message = node.getAttribute("data-whatsapp-message") || "";
+    const link = buildWhatsAppLink(message);
+
+    if (node.tagName === "A") {
+      node.setAttribute("href", link);
+      node.setAttribute("target", "_blank");
+      node.setAttribute("rel", "noopener");
+    } else {
+      node.addEventListener("click", () => openWhatsApp(message));
+    }
+  });
+
+  // Plain WhatsApp links with no custom message (data-whatsapp="plain")
+  document.querySelectorAll('[data-whatsapp="plain"]').forEach((node) => {
+    node.setAttribute("href", buildWhatsAppLink());
+    node.setAttribute("target", "_blank");
+    node.setAttribute("rel", "noopener");
+  });
+}
+
+/**
+ * Wires up [data-call] elements to a tel: link using CALL_NUMBER.
+ */
+function initCallButtons() {
+  document.querySelectorAll("[data-call]").forEach((node) => {
+    node.setAttribute("href", `tel:${CALL_NUMBER}`);
+  });
+}
+
+/* -------------------------------------------------------------------------
+   MOBILE NAVIGATION
+   ------------------------------------------------------------------------- */
+function initMobileNav() {
+  const toggle = document.querySelector(".hamburger");
+  const menu = document.querySelector(".mobile-nav");
+  if (!toggle || !menu) return;
+
+  const closeMenu = () => {
+    menu.classList.remove("is-open");
+    toggle.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  };
+
+  const openMenu = () => {
+    menu.classList.add("is-open");
+    toggle.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  };
+
+  toggle.addEventListener("click", () => {
+    const isOpen = menu.classList.contains("is-open");
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  // Close when a link inside the mobile menu is clicked
+  menu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  // Close on Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+}
+
+/* -------------------------------------------------------------------------
+   ACTIVE NAV LINK
+   Marks the nav link matching the current page with aria-current="page".
+   ------------------------------------------------------------------------- */
+function markActiveNavLink() {
+  const path = window.location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".nav-links a, .mobile-nav a").forEach((link) => {
+    const href = link.getAttribute("href");
+    if (href === path || (path === "" && href === "index.html")) {
+      link.setAttribute("aria-current", "page");
+    }
+  });
+}
+
+/* -------------------------------------------------------------------------
+   STAR RATING WIDGET (used on the feedback form)
+   Renders as a row of buttons; keeps the chosen value in a hidden input.
+   ------------------------------------------------------------------------- */
+function initStarRatings() {
+  document.querySelectorAll("[data-star-rating]").forEach((wrapper) => {
+    const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+    const buttons = Array.from(wrapper.querySelectorAll("button"));
+
+    const setRating = (value) => {
+      buttons.forEach((btn) => {
+        const btnValue = Number(btn.getAttribute("data-value"));
+        btn.classList.toggle("is-active", btnValue <= value);
+        btn.setAttribute("aria-pressed", btnValue <= value ? "true" : "false");
+      });
+      if (hiddenInput) hiddenInput.value = String(value);
+    };
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        setRating(Number(btn.getAttribute("data-value")));
+      });
+    });
+  });
+}
+
+/* -------------------------------------------------------------------------
+   GENERIC FORM HANDLING
+   -----------------------------------------------------------------------
+   These forms do not have a backend yet. On submit, we run simple
+   validation and show a success message so the beginner site owner can
+   see the intended experience. This is the exact spot to later swap in a
+   real fetch() call to a Google Apps Script Web App URL.
+
+   INTEGRATION POINT:
+   Replace the body of `fakeSubmit()` with something like:
+
+     await fetch("https://script.google.com/macros/s/XXXX/exec", {
+       method: "POST",
+       body: new FormData(form)
+     });
+
+   ------------------------------------------------------------------------- */
+
+function showFieldError(field, message) {
+  field.classList.add("has-error");
+  const errorEl = field.querySelector(".field-error");
+  if (errorEl) errorEl.textContent = message;
+}
+
+function clearFieldError(field) {
+  field.classList.remove("has-error");
+}
+
+function validateForm(form) {
+  let isValid = true;
+  const fields = form.querySelectorAll("[data-field]");
+
+  fields.forEach((field) => {
+    clearFieldError(field);
+    const input = field.querySelector("input, select, textarea");
+    if (!input) return;
+
+    const isRequired = input.hasAttribute("required");
+    const isCheckbox = input.type === "checkbox";
+    const value = isCheckbox ? input.checked : input.value.trim();
+
+    if (isRequired && !value) {
+      showFieldError(field, "This field is required.");
+      isValid = false;
+      return;
+    }
+
+    if (input.type === "tel" && value && !/^[0-9+\-\s()]{7,15}$/.test(value)) {
+      showFieldError(field, "Please enter a valid phone number.");
+      isValid = false;
+    }
+
+    if (input.type === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      showFieldError(field, "Please enter a valid email address.");
+      isValid = false;
+    }
+  });
+
+  return isValid;
+}
+
+function showFormStatus(form, type, message) {
+  const statusEl = form.querySelector(".form-status");
+  if (!statusEl) return;
+  statusEl.textContent = message;
+  statusEl.className = `form-status is-visible form-status--${type}`;
+  statusEl.setAttribute("role", "status");
+  statusEl.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+/**
+ * Placeholder submit handler. Replace with a real request to Google Apps
+ * Script once the backend is ready (see comment block above).
+ */
+function fakeSubmit(form) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 500); // simulate a short network delay
+  });
+}
+
+function initForms() {
+  document.querySelectorAll("form[data-tutoria-form]").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!validateForm(form)) {
+        showFormStatus(form, "error", "Please check the highlighted fields and try again.");
+        return;
+      }
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
+      }
+
+      try {
+        await fakeSubmit(form);
+        showFormStatus(
+          form,
+          "success",
+          "Thank you. Your submission has been received — our team will follow up on WhatsApp shortly."
+        );
+        form.reset();
+        form.querySelectorAll(".is-active").forEach((el) => el.classList.remove("is-active"));
+      } catch (err) {
+        showFormStatus(form, "error", "Something went wrong. Please try again or message us on WhatsApp.");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = submitBtn.getAttribute("data-original-label") || "Submit";
+        }
+      }
+    });
+  });
+}
+
+/* -------------------------------------------------------------------------
+   AGREEMENT CODE CHECK (agreement.html)
+   -----------------------------------------------------------------------
+   Frontend-only placeholder. No real codes are stored in this file.
+   INTEGRATION POINT: replace `checkAgreementCode()` with a call to your
+   verification backend (for example a Google Apps Script Web App that
+   checks the code against a Google Sheet) once it exists.
+   ------------------------------------------------------------------------- */
+function checkAgreementCode(code) {
+  // Placeholder only — always resolves to "pending", since real
+  // verification is not implemented yet. Replace this function body with
+  // a fetch() call to your verification endpoint when it is ready.
+  return Promise.resolve({ status: "pending" });
+}
+
+function initAgreementForm() {
+  const form = document.querySelector("#agreement-code-form");
+  if (!form) return;
+
+  const resultBox = document.querySelector("#agreement-result");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const input = form.querySelector("#agreement-code");
+    const code = input.value.trim();
+
+    if (!code) {
+      showFieldError(input.closest(".field"), "Please enter your agreement code.");
+      return;
+    }
+    clearFieldError(input.closest(".field"));
+
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    button.textContent = "Checking...";
+
+    const result = await checkAgreementCode(code);
+
+    button.disabled = false;
+    button.textContent = "Continue";
+
+    if (resultBox) {
+      resultBox.classList.add("is-visible");
+      resultBox.textContent =
+        "Agreement verification will be connected here. Once live, a valid code will take you straight to your agreement form.";
+      resultBox.setAttribute("role", "status");
+    }
+  });
+}
+
+/* -------------------------------------------------------------------------
+   FOOTER YEAR
+   ------------------------------------------------------------------------- */
+function setFooterYear() {
+  const el = document.querySelector("#footer-year");
+  if (el) el.textContent = new Date().getFullYear();
+}
+
+/* -------------------------------------------------------------------------
+   INIT
+   ------------------------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  initWhatsAppButtons();
+  initCallButtons();
+  initMobileNav();
+  markActiveNavLink();
+  initStarRatings();
+  initForms();
+  initAgreementForm();
+  setFooterYear();
+});
+
+</script>
+</body>
+</html>
